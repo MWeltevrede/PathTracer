@@ -8,11 +8,16 @@
 #ifndef pathtracer_h
 #define pathtracer_h
 
-#include "Ray.h"
+#include "ray.h"
+#include "BVH.h"
+#include "intersection.h"
 
+/*
+ * Path tracer.
+ */
 namespace PT
 {
 	Vec3Df computeRadiance(Ray &r);
 }
 
-#endif /* pathtracer_h */
+#endif
