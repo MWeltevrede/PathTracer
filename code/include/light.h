@@ -40,14 +40,12 @@ class LightSphere
 	
 		void initialiseLight(Vec3Df &origin, float radius, Vec3Df &emmision);
 
-		Ray randomLightSample(Vec3Df &rayOrigin); // creates a jittered sample from the subdivision
+		Ray jitteredSample(Vec3Df &rayOrigin); // creates a jittered sample from the subdivision
 	
 	private:
 		float radius;
 		Vec3Df origin;
 		Vec3Df emmision;
-	
-		LightRectangle boundingSquare;
 
 		// mapping that preserves fractional area, is bicontinues and has low distortion
 		std::pair<float, float> concentricMap(std::pair<float, float> pair);
