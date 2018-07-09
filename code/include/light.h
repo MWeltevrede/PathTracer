@@ -40,7 +40,7 @@ class LightSphere
 	
 		void initialiseLight(Vec3Df &origin, float radius, Vec3Df &emmision);
 
-		Ray jitteredSample(Vec3Df &rayOrigin); // creates a jittered sample from the subdivision
+		Ray randomLightSample(Vec3Df &rayOrigin); // creates a jittered sample from the subdivision
 	
 	private:
 		float radius;
