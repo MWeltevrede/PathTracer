@@ -13,15 +13,15 @@
 
 struct Material
 {
-	Vec3Df Kd;      // diffuse
-	Vec3Df Ka;      // ambient
-	Vec3Df Ks;		// specular
-	Vec3Df E;		// specular
-	float Ns;		//
-	float Ni;		// Index of refraction
-	int illum;		//illumination model
-	float Tr;		// transparency
-	std::string name;
+	Vec3Df Kd = Vec3Df(0,0,0);      // diffuse
+	Vec3Df Ka = Vec3Df(0,0,0);      // ambient
+	Vec3Df Ks = Vec3Df(0,0,0);		// specular
+	Vec3Df E = Vec3Df(0,0,0);		// specular
+	float Ns = 0;		//
+	float Ni = 0;		// Index of refraction
+	int illum = 0;		//illumination model
+	float Tr = 0;		// transparency
+	std::string name = "";
 };
 
 #endif 
