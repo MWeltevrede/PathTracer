@@ -1,6 +1,3 @@
-//
-//  Shape.cpp
-
 #include <stdio.h>
 #include "light.h"
 #define _USE_MATH_DEFINES

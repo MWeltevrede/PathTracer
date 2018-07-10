@@ -8,6 +8,8 @@
 #ifndef random_h
 #define random_h
 
+#include <random>
+
 // Uniform random number generator [0, 1)
 std::random_device rd;	// seed
 std::mt19937 gen(rd());	// Mersenne twister seeded with rd

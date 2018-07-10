@@ -5,6 +5,10 @@
 #include "cam.h"
 #include "pathtracer.h"
 
+
+extern const int width;
+extern const int height;
+
 /*
  * Initiates the rendering process for the given pixel (x,y).
  * Stores the result in output.

@@ -5,6 +5,7 @@
 #include "BVH.h"
 #include "render.h"
 #include "tonemap.h"
+#include "imageWriter.h"
 
 #define PI 3.141592653589
 
@@ -15,6 +16,12 @@
 
 const int width = 100;
 const int height = 100;
+
+/*
+ * Structures
+ */
+std::vector<Sphere> spheres;
+std::vector<Light> lights;
 
 void initScene()
 {
@@ -112,7 +119,7 @@ int main()
 	initScene();
 	
 	// camera
-	setCamProperties(width, height, PI / 2.);
+	setCamProperties(PI / 2.);
 	MATRIX m = MATRIX(Vec3Df(1,0,0), Vec3Df(0,1,0), Vec3Df(0,0,1));
 	Vec3Df o = Vec3Df(0,0,0);
 	setCamToWorldMatrix(m, o);
@@ -124,6 +131,8 @@ int main()
 	
 	// Loop through image
 	Vec3Df *output = new Vec3Df[width*height];
+	Image result(width,height);
+	
 	for (int i=0; i < width; i++)
 	{
 		for (int j=0; j < height; j++)
@@ -133,6 +142,18 @@ int main()
 	}
 	
 	ToneMap::exposure(output, 1);
+	
+	// temporary
+	for (int y = 0; y < height; ++y)
+	{
+		for (unsigned int x = 0; x < width; ++x)
+		{
+			int i = (height - 1 - y) * width + x;	// row-major index, (0,0) in bottom left
+			result.setPixel(x, y, RGBValue(output[i][0], output[i][1], output[i][2]));
+		}
+	}
+	
+	result.writeImage("result.bmp");
 	
 	duration = (clock() - start) / (double) CLOCKS_PER_SEC;
 	std::cout << "Duration: " << duration << " seconds" << std::endl;

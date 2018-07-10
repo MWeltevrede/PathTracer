@@ -9,21 +9,15 @@
 #include "cam.h"
 #include "math.h"
 
-int width, height;		// camera resolution
 float fov;				// vertical field of view (rad)
 Vec3Df origin;			// camera origin
 MATRIX camToWorld;		// transforms from pixel space to world space
 
-int getWidth() { return width; }
-int getHeight() { return height; }
-
 /*
  * Set camera properties such as resolution and field of view.
  */
-void setCamProperties(int w, int h, float f)
+void setCamProperties(float f)
 {
-	width = w;
-	height = h;
 	fov = f;
 }
 

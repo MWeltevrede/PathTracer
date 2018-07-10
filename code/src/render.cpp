@@ -12,9 +12,9 @@
  * Draw spp number of samples per pixel (x,y).
  * Stores the result in output.
  */
-void render_kernel(Vec3Df *output, int x, int y, int spp)
+void render_kernel(Vec3Df *output, float x, float y, int spp)
 {
-	int i = (getHeight() - 1 - y) * getWidth() + x;	// row-major index, (0,0) in bottom left
+	int i = (height - 1 - y) * width + x;	// row-major index, (0,0) in bottom left
 	Vec3Df color = Vec3Df(0,0,0);	// final pixel color
 	
 	// sample multiple times per pixel

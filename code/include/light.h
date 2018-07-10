@@ -4,7 +4,7 @@
 #include <vector>
 #include "Vec3D.h"
 #include "ray.h"
-#include "BVH.h"
+//#include "BVH.h"
 
 class Light
 {
@@ -12,8 +12,8 @@ class Light
 	Light() {};
 	Vec3Df getEmmision() {return emmision;}
 	
-	virtual Ray randomLightSample(Vec3Df &rayOrigin, float &distance);
-	virtual float computeDirectIlluminationWeight(Ray &r, float distance_squared);
+	virtual Ray randomLightSample(Vec3Df &rayOrigin, float &distance) {return Ray();}
+	virtual float computeDirectIlluminationWeight(Ray &r, float distance_squared) {return 0.f;}
 	
 	protected:
 	Vec3Df origin;
@@ -30,8 +30,8 @@ class LightRectangle : public Light
 							 float width, float height);
 		Vec3Df getNormal() {return normal;}
 	
-		Ray randomLightSample(Vec3Df &rayOrigin, float &distance);
-		float computeDirectIlluminationWeight(Ray &r, float distance_squared);
+		virtual Ray randomLightSample(Vec3Df &rayOrigin, float &distance);
+		virtual float computeDirectIlluminationWeight(Ray &r, float distance_squared);
 	
 	private:
 		Vec3Df axis1;
@@ -51,8 +51,8 @@ class LightSphere : public Light
 	
 		void light_init(Vec3Df &origin, float radius, Vec3Df &emmision);
 	
-		Ray randomLightSample(Vec3Df &rayOrigin, float &distance);
-		float computeDirectIlluminationWeight(Ray &r, float distance_squared);
+		virtual Ray randomLightSample(Vec3Df &rayOrigin, float &distance);
+		virtual float computeDirectIlluminationWeight(Ray &r, float distance_squared);
 	
 	private:
 		float radius;

@@ -17,8 +17,8 @@
 /*
  * Structures
  */
-std::vector<Sphere> spheres;
-std::vector<Light> lights;
+extern std::vector<Sphere> spheres;
+extern std::vector<Light> lights;
 
 /*
  *	Find closest intersection using a BVH structure.

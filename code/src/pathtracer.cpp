@@ -34,6 +34,32 @@ Vec3Df explicitLightSampling(Intersection &inter)
 	return color;
 }
 
+/*
+ *	Sample diffuse hemisphere with importance sampling.
+ */
+Vec3Df sampleHemiSphere(const Vec3Df &normal, double u1, double u2)
+{
+	Vec3Df u,v;
+	normal.getTwoOrthogonals(u, v);
+	Vec3Df dir, sampledDir;
+	
+	//// PDF = 1/2PI
+	//float r = sqrt(1.0f - u1*u1);
+	//float phi = 2*M_PI*u2;
+	//sampledDir = Vec3Df(cos(phi)*r, sin(phi)*r, u1);
+	
+	// PDF = cos(theta)/PI
+	float r = sqrt(1.0f - u1);
+	float phi = 2 * M_PI*u2;
+	sampledDir = Vec3Df(cos(phi)*r, sin(phi)*r, sqrt(u1));
+	
+	dir[0] = Vec3Df::dotProduct(Vec3Df(u[0], v[0], normal[0]), sampledDir);
+	dir[1] = Vec3Df::dotProduct(Vec3Df(u[1], v[1], normal[1]), sampledDir);
+	dir[2] = Vec3Df::dotProduct(Vec3Df(u[2], v[2], normal[2]), sampledDir);
+	dir.normalize();
+	return dir;
+}
+
 
 /*
  * Path tracer radiance function.
