@@ -6,25 +6,36 @@
 #include "ray.h"
 #include "BVH.h"
 
+class Light
+{
+	public:
+	Light() {};
+	Vec3Df getEmmision() {return emmision;}
+	
+	virtual Ray randomLightSample(Vec3Df &rayOrigin, float &distance);
+	virtual float computeDirectIlluminationWeight(Ray &r, float distance_squared);
+	
+	protected:
+	Vec3Df origin;
+	Vec3Df emmision;
+};
+
 // Class for sampling rectangular light sources.
-class LightRectangle
+class LightRectangle : public Light
 {
 	public:
 		LightRectangle() {};
 
 		void light_init(Vec3Df &origin, Vec3Df &axis1, Vec3Df &axis2, Vec3Df &emmision,
 							 float width, float height);
-	
-		Ray randomLightSample(Vec3Df &rayOrigin); // creates a jittered sample from the subdivision
-	
-		Vec3Df getEmmision() {return emmision;}
 		Vec3Df getNormal() {return normal;}
+	
+		Ray randomLightSample(Vec3Df &rayOrigin, float &distance);
+		float computeDirectIlluminationWeight(Ray &r, float distance_squared);
 	
 	private:
 		Vec3Df axis1;
 		Vec3Df axis2;
-		Vec3Df origin;
-		Vec3Df emmision;
 		Vec3Df normal;
 		float width;
 		float height;
@@ -33,20 +44,19 @@ class LightRectangle
 /*
  * Class for sampling spherical lights
  */
-class LightSphere
+class LightSphere : public Light
 {
 	public:
 		LightSphere() {};
 	
 		void light_init(Vec3Df &origin, float radius, Vec3Df &emmision);
-
-		Ray randomLightSample(Vec3Df &rayOrigin); // creates a jittered sample from the subdivision
+	
+		Ray randomLightSample(Vec3Df &rayOrigin, float &distance);
+		float computeDirectIlluminationWeight(Ray &r, float distance_squared);
 	
 	private:
 		float radius;
-		Vec3Df origin;
-		Vec3Df emmision;
-
+	
 		// mapping that preserves fractional area, is bicontinues and has low distortion
 		std::pair<float, float> concentricMap(std::pair<float, float> pair);
 };

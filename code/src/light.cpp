@@ -52,7 +52,7 @@ void LightRectangle::light_init(Vec3Df &o, Vec3Df &ax1, Vec3Df &ax2, Vec3Df &e,
 }
 
 // Function that will generate jittered (stratified) random samples from the subdivision
-Ray LightRectangle::randomLightSample(Vec3Df &rayOrigin)
+Ray LightRectangle::randomLightSample(Vec3Df &rayOrigin, float &distance)
 {
 	// Uniform random number generator [0, 1)
 	std::random_device rd;	// seed
@@ -67,9 +67,16 @@ Ray LightRectangle::randomLightSample(Vec3Df &rayOrigin)
 	
 	Vec3Df dest = origin + x*axis1 + y*axis2;
 	Vec3Df dir = dest - rayOrigin;
+	distance = sqrt(Vec3Df::dotProduct(dir, dir));
 	dir.normalize();
 	
 	return Ray(rayOrigin, dir);
+}
+
+float LightRectangle::computeDirectIlluminationWeight(Ray &r, float distance_squared)
+{
+	float weight = height * width * abs(Vec3Df::dotProduct(normal, -r.dir)) / distance_squared;
+	return weight;
 }
 
 //// Returns a random point on the light source
@@ -155,7 +162,7 @@ void LightSphere::light_init(Vec3Df &o, float r, Vec3Df &e)
 	emmision = e;
 }
 
-Ray LightSphere::randomLightSample(Vec3Df &rayOrigin)
+Ray LightSphere::randomLightSample(Vec3Df &rayOrigin, float &distance)
 {
 	Vec3Df normal = origin - rayOrigin;
 	normal.normalize();
@@ -179,9 +186,26 @@ Ray LightSphere::randomLightSample(Vec3Df &rayOrigin)
 	
 	Vec3Df dest = origin + pair.first*axis1 + pair.second*axis2;
 	Vec3Df dir = dest - rayOrigin;
+	distance = sqrt(Vec3Df::dotProduct(dir, dir));
 	dir.normalize();
 	
+	// Law of cosines
+	Vec3Df AB = pair.first*axis1 + pair.second*axis2;
+	AB.normalize();
+	float cos_theta = Vec3Df::dotProduct(AB, dir);
+	float AB_length = sqrt(pair.first*pair.first + pair.second*pair.second);
+	float b = -2*AB_length*cos_theta;
+	float c = AB_length*AB_length - radius*radius;
+	float delta = b + sqrt(b*b - 4*c) / 2.;		// should always be positive
+	distance -= delta;
+	
 	return Ray(rayOrigin, dir);
+}
+
+float LightSphere::computeDirectIlluminationWeight(Ray &r, float distance_squared)
+{
+	float weight = M_PI * radius * radius / distance_squared;
+	return weight;
 }
 
 
