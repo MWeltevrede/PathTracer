@@ -37,7 +37,7 @@
 //	n.normalize();
 //}
 
-void LightRectangle::initialiseLight(Vec3Df &o, Vec3Df &ax1, Vec3Df &ax2, Vec3Df &e,
+void LightRectangle::light_init(Vec3Df &o, Vec3Df &ax1, Vec3Df &ax2, Vec3Df &e,
 					 float w, float h)
 {
 	origin = o;
@@ -148,7 +148,7 @@ std::pair<float, float> LightSphere::concentricMap(std::pair<float, float> s)
 	return std::pair<float, float>(u,v);
 }
 
-void LightSphere::initialiseLight(Vec3Df &o, float r, Vec3Df &e)
+void LightSphere::light_init(Vec3Df &o, float r, Vec3Df &e)
 {
 	origin = o;
 	radius = r;

@@ -12,7 +12,7 @@ class LightRectangle
 	public:
 		LightRectangle() {};
 
-		void initialiseLight(Vec3Df &origin, Vec3Df &axis1, Vec3Df &axis2, Vec3Df &emmision,
+		void light_init(Vec3Df &origin, Vec3Df &axis1, Vec3Df &axis2, Vec3Df &emmision,
 							 float width, float height);
 	
 		Ray randomLightSample(Vec3Df &rayOrigin); // creates a jittered sample from the subdivision
@@ -38,7 +38,7 @@ class LightSphere
 	public:
 		LightSphere() {};
 	
-		void initialiseLight(Vec3Df &origin, float radius, Vec3Df &emmision);
+		void light_init(Vec3Df &origin, float radius, Vec3Df &emmision);
 
 		Ray randomLightSample(Vec3Df &rayOrigin); // creates a jittered sample from the subdivision
 	
