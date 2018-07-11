@@ -22,7 +22,7 @@ void render_kernel(Vec3Df *output, float x, float y, int spp)
 	{
 		// anti-aliasing to be implemented here
 		Ray cam = getCamRay(x + 0.5, y + 0.5);
-		color += PT::computeRadiance(cam) / spp;		// regular path tracer
+		color += PT::computeRadiance(cam) * 1. / spp;		// regular path tracer
 	}
 	
 	output[i] = color;

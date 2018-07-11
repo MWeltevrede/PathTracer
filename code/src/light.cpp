@@ -193,7 +193,7 @@ Ray LightSphere::randomLightSample(Vec3Df &rayOrigin, float &distance)
 	float AB_length = sqrt(pair.first*pair.first + pair.second*pair.second);
 	float b = -2*AB_length*cos_theta;
 	float c = AB_length*AB_length - radius*radius;
-	float delta = b + sqrt(b*b - 4*c) / 2.;		// should always be positive
+	float delta = -b + sqrt(b*b - 4*c) / 2.;		// should always be positive
 	distance -= delta;
 	
 	return Ray(rayOrigin, dir);

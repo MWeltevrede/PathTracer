@@ -10,6 +10,7 @@ class Light
 {
 	public:
 	Light() {};
+	virtual ~Light() {}
 	Vec3Df getEmmision() {return emmision;}
 	
 	virtual Ray randomLightSample(Vec3Df &rayOrigin, float &distance) {return Ray();}
@@ -25,6 +26,7 @@ class LightRectangle : public Light
 {
 	public:
 		LightRectangle() {};
+		virtual ~LightRectangle() {}
 
 		void light_init(Vec3Df &origin, Vec3Df &axis1, Vec3Df &axis2, Vec3Df &emmision,
 							 float width, float height);
@@ -48,6 +50,7 @@ class LightSphere : public Light
 {
 	public:
 		LightSphere() {};
+		virtual ~LightSphere() {}
 	
 		void light_init(Vec3Df &origin, float radius, Vec3Df &emmision);
 	
