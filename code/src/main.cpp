@@ -6,6 +6,7 @@
 #include "render.h"
 #include "tonemap.h"
 #include "imageWriter.h"
+#include "random.h"
 
 #define PI 3.141592653589
 
@@ -16,12 +17,19 @@
 
 const int width = 400;
 const int height = 400;
+const int spp = 10;
 
 /*
  * Structures
  */
 std::vector<Sphere> spheres;
 std::vector<Light *> lights;
+
+// Uniform random number generator [0, 1)
+std::random_device rd;	// seed
+std::mt19937 gen(rd());	// Mersenne twister seeded with rd
+std::uniform_real_distribution<double> dis(0.0, 1.0);
+
 
 void initScene()
 {
@@ -86,7 +94,7 @@ void initScene()
 	Material m9 = Material();
 	m9.Kd = Vec3Df(0.0f, 0.0f, 0.0f);
 	m9.illum = 1;
-	m9.E = Vec3Df(20.0f, 18.f, 16.f);
+	m9.E = Vec3Df(2.0f, 1.8f, 1.6f);
 	Vec3Df c9 = Vec3Df(0, 3, 3);
 	s9.sphere_init(0.25, c9, m9);
 	spheres.push_back(s9);
@@ -129,11 +137,11 @@ int main()
 	{
 		for (int j=0; j < height; j++)
 		{
-			render_kernel(output, i, j, 50);
+			render_kernel(output, i, j, spp);
 		}
 	}
 	
-	ToneMap::exposure(output, 1);
+	ToneMap::exposure(output, 10);
 	
 	// temporary
 	for (int y = 0; y < height; ++y)

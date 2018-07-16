@@ -4,6 +4,7 @@
 #include "ray.h"
 #include "cam.h"
 #include "pathtracer.h"
+#include <random>
 
 
 extern const int width;

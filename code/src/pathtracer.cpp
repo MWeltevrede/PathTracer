@@ -9,19 +9,22 @@
 #include "pathtracer.h"
 #include "random.h"
 
+std::vector<Halton> halt_hemi1;
+std::vector<Halton> halt_hemi2;
+
 /*
  * Randomly samples a light source.
  * Returns p*L
  * where p is the probability for sampling the particular lightray.
  */
-Vec3Df explicitLightSampling(Intersection &inter)
+Vec3Df explicitLightSampling(Intersection &inter, std::vector<Halton> &halt)
 {
 	Vec3Df color = Vec3Df(0,0,0);
-	int rand_light = floor(dis(gen)*lights.size());		// pick a random light source to sample
+	int rand_light = floor(halt.at(4).next() * lights.size());		// pick a random light source to sample
 	
 	Light *l = lights.at(rand_light);
 	float distance_to_light = 0;
-	Ray light_sample = l->randomLightSample(inter.hp, distance_to_light);
+	Ray light_sample = l->randomLightSample(inter.hp, distance_to_light, halt);
 	
 	if (isOccluded(light_sample, distance_to_light))
 	{
@@ -64,8 +67,13 @@ Vec3Df sampleHemiSphere(const Vec3Df &normal, double u1, double u2)
 /*
  * Path tracer radiance function.
  */
-Vec3Df PT::computeRadiance(Ray &r)
+Vec3Df PT::computeRadiance(Ray &r, std::vector<Halton> &halt)
 {
+	// Uniform random number generator [0, 1)
+	std::random_device rd;	// seed
+	std::mt19937 gen1(rd());	// Mersenne twister seeded with rd
+	std::uniform_int_distribution<unsigned int> dis_int(0, UINT_MAX);
+	
 	Vec3Df color = Vec3Df(0,0,0);
 	Intersection inter;
 	
@@ -74,10 +82,22 @@ Vec3Df PT::computeRadiance(Ray &r)
 	int depth = 1;
 	Vec3Df mask = Vec3Df(1,1,1);
 	float rrFactor = 1;
+	halt_hemi1.push_back(Halton(2,dis_int(gen1)));
+	halt_hemi2.push_back(Halton(3,dis_int(gen1)));
 	
 	// iterative instead of recursion
 	while (!terminated)
 	{
+		// add new halton sampler for current depth level
+		if (depth > halt_hemi1.size())
+		{
+			halt_hemi1.push_back(Halton(2,dis_int(gen1)));
+			halt_hemi2.push_back(Halton(3,dis_int(gen1)));
+		}
+		
+		Halton hemi_samp1 = halt_hemi1.at(depth - 1);
+		Halton hemi_samp2 = halt_hemi2.at(depth - 1);
+		
 		Intersection inter = computeIntersection(r);
 		
 		if (!inter.hit) break;
@@ -95,22 +115,32 @@ Vec3Df PT::computeRadiance(Ray &r)
 			mask *=  inter.material.Kd;
 			
 			// Direct lighting
-			color += mask * explicitLightSampling(inter) / M_PI;
+			color += mask * explicitLightSampling(inter, halt) / M_PI;
 			
 			// Indirect lighting
 			// Hemisphere sampling
-			Vec3Df dir = sampleHemiSphere(inter.normal, dis(gen), dis(gen));
+//			float rand1 = hemi_samp1.next();
+//			float rand2 = hemi_samp2.next();
+			float rand1 = dis(gen);
+			float rand2 = dis(gen);
+			Vec3Df dir = sampleHemiSphere(inter.normal, rand1, rand2);
 			r.origin = inter.hp;
 			r.dir = dir;
 			add_emission = false;
 		}
 		
-		// russian roulette
+		// russian roulette based on the mask
 		if (depth > 5)
 		{
+//			double P_term = 1. - std::max(mask[0], std::max(mask[1], mask[2]));
+//			double rand = dis(gen);
+//			if (rand <= P_term)
+//			{
+//				terminated = true;
+//			}
+//			rrFactor = 1. / (1. - P_term);
+//			mask *= rrFactor;
 			terminated = true;
-			rrFactor = 0;
-			mask *= rrFactor;
 		}
 		
 		depth++;

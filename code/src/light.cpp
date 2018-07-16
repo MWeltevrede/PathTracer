@@ -4,35 +4,9 @@
 #include <math.h>
 #include <random>
 
-//// Returns a random point on the light source
-//Vec3Df LightRectangle::getRandomPoint()
-//{
-//	// Uniform random number generator [0, 1)
-//	std::random_device rd;	// seed
-//	std::mt19937 gen(rd());	// Mersenne twister seeded with rd
-//	std::uniform_real_distribution<double> dis(0.0, 1.0);
-//
-//	std::vector<std::pair<float, float> > samples = jitteredSamples();
-//	int index = floor(dis(gen) * samples.size());
-//	Vec3Df rayDestination = o + axis1 * samples.at(index).first + axis2 * samples.at(index).second;
-//	return rayDestination;
-//}
-
-//// Calculates and sets all the variables for the subdivision
-//void RectangleLight::subdivide(int s)
-//{
-//	sampleWidth = s;
-//	subWidth = width/s;
-//	subHeight = height/s;
-//}
-
-//void RectangleLight::computeNormal(const Vec3Df &ax1, const Vec3Df &ax2)
-//{
-//	axis1 = ax1;
-//	axis2 = ax2;
-//	n = Vec3Df::crossProduct(axis1, axis2);
-//	n.normalize();
-//}
+// Uniform random number generator [0, 1)
+extern std::mt19937 gen;	// Mersenne twister seeded with rd
+extern std::uniform_real_distribution<double> dis;
 
 void LightRectangle::light_init(Vec3Df &o, Vec3Df &ax1, Vec3Df &ax2, Vec3Df &e,
 					 float w, float h)
@@ -49,15 +23,10 @@ void LightRectangle::light_init(Vec3Df &o, Vec3Df &ax1, Vec3Df &ax2, Vec3Df &e,
 }
 
 // Function that will generate jittered (stratified) random samples from the subdivision
-Ray LightRectangle::randomLightSample(Vec3Df &rayOrigin, float &distance)
-{
-	// Uniform random number generator [0, 1)
-	std::random_device rd;	// seed
-	std::mt19937 gen(rd());	// Mersenne twister seeded with rd
-	std::uniform_real_distribution<double> dis(0.0, 1.0);
-	
-	double rand_x = dis(gen);
-	double rand_y = dis(gen);
+Ray LightRectangle::randomLightSample(Vec3Df &rayOrigin, float &distance, std::vector<Halton> &halt)
+{	
+	double rand_x = halt.at(2).next();
+	double rand_y = halt.at(3).next();
 	
 	float x = rand_x*width;
 	float y = rand_y*height;
@@ -76,38 +45,6 @@ float LightRectangle::computeDirectIlluminationWeight(Ray &r, float distance_squ
 	return weight;
 }
 
-//// Returns a random point on the light source
-//Vec3Df Disk::getRandomPoint(const Vec3Df &rayOrigin, const Vec3Df &diskOrigin)
-//{
-//	// Uniform random number generator [0, 1)
-//	std::random_device rd;	// seed
-//	std::mt19937 gen(rd());	// Mersenne twister seeded with rd
-//	std::uniform_real_distribution<double> dis(0.0, 1.0);
-//
-//	std::vector<std::pair<float, float>> samples = boundingSquare.jitteredSamples();
-//
-//	// seting up the disk plane with the disk center as origin
-//	Vec3Df rayDirection = diskOrigin - rayOrigin;
-//	Vec3Df axis1, axis2;
-//	rayDirection.getTwoOrthogonals(axis1, axis2);
-//	axis1.normalize();
-//	axis2.normalize();
-//
-//	int index = floor(dis(gen) * samples.size());
-//	std::pair<float, float> pair = concentricMap(samples.at(index));
-//
-//	return diskOrigin + pair.first*axis1 + pair.second*axis2;
-//}
-
-//// Calculates and sets all the variables for the subdivision
-//// Including the bounding square used for sampling
-//void Disk::subdivide(int s)
-//{
-//	boundingSquare.setWidth(2*radius);
-//	boundingSquare.setHeight(2*radius);
-//	boundingSquare.subdivide(s);
-//	sampleWidth = s;
-//}
 
 // A mapping from a square to a disk that preserves fractional area,
 // is bicontinues (preserves adjacency) and has low distortion
@@ -159,7 +96,7 @@ void LightSphere::light_init(Vec3Df &o, float r, Vec3Df &e)
 	emmision = e;
 }
 
-Ray LightSphere::randomLightSample(Vec3Df &rayOrigin, float &distance)
+Ray LightSphere::randomLightSample(Vec3Df &rayOrigin, float &distance, std::vector<Halton> &halt)
 {
 	Vec3Df normal = origin - rayOrigin;
 	normal.normalize();
@@ -168,10 +105,8 @@ Ray LightSphere::randomLightSample(Vec3Df &rayOrigin, float &distance)
 	axis1.normalize();
 	axis2.normalize();
 	
-	// Uniform random number generator [0, 1)
-	std::random_device rd;	// seed
-	std::mt19937 gen(rd());	// Mersenne twister seeded with rd
-	std::uniform_real_distribution<double> dis(0.0, 1.0);
+//	double rand_x = halt.at(2).next();
+//	double rand_y = halt.at(3).next();
 	
 	double rand_x = dis(gen);
 	double rand_y = dis(gen);
