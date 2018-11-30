@@ -8,6 +8,8 @@
 #include <stdio.h>
 #include "pathtracer.h"
 #include "random.h"
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 std::vector<Halton> halt_hemi1;
 std::vector<Halton> halt_hemi2;
@@ -25,6 +27,25 @@ Vec3Df explicitLightSampling(Intersection &inter, std::vector<Halton> &halt)
 	Light *l = lights.at(rand_light);
 	float distance_to_light = 0;
 	Ray light_sample = l->randomLightSample(inter.hp, distance_to_light, halt);
+	float dot = Vec3Df::dotProduct(inter.normal, light_sample.dir);
+
+	// check if light source is behind us
+	// this solution doesn't properly deal with light sources that are partialy behind us
+	int i = 0;
+	while (dot < 0)
+	{
+		// all light sources are behind us
+		if (i >= lights.size()) { return color; }
+
+		// choose different light source 
+		// (light sources behind us are not part of the integral)
+		rand_light = (rand_light + 1) % lights.size();	// just take next light source
+		l = lights.at(rand_light);
+		distance_to_light = 0;
+		light_sample = l->randomLightSample(inter.hp, distance_to_light, halt);
+		dot = Vec3Df::dotProduct(inter.normal, light_sample.dir);
+		i++;
+	}
 	
 	if (isOccluded(light_sample, distance_to_light))
 	{
@@ -32,7 +53,13 @@ Vec3Df explicitLightSampling(Intersection &inter, std::vector<Halton> &halt)
 	}
 	
 	float weight = l->computeDirectIlluminationWeight(light_sample, distance_to_light*distance_to_light);
-	color = l->getEmmision() * weight * Vec3Df::dotProduct(inter.normal, light_sample.dir);
+	color = l->getEmmision() * weight * dot;
+
+	int what = 0;
+	if (color < Vec3Df(0, 0, 0))
+	{
+		what = 1;
+	}
 
 	return color;
 }
@@ -72,7 +99,7 @@ Vec3Df PT::computeRadiance(Ray &r, std::vector<Halton> &halt)
 	// Uniform random number generator [0, 1)
 	std::random_device rd;	// seed
 	std::mt19937 gen1(rd());	// Mersenne twister seeded with rd
-	std::uniform_int_distribution<unsigned int> dis_int(0, UINT_MAX);
+	std::uniform_int_distribution<unsigned int> dis_int(0, INT_MAX);
 	
 	Vec3Df color = Vec3Df(0,0,0);
 	Intersection inter;
@@ -82,21 +109,21 @@ Vec3Df PT::computeRadiance(Ray &r, std::vector<Halton> &halt)
 	int depth = 1;
 	Vec3Df mask = Vec3Df(1,1,1);
 	float rrFactor = 1;
-	halt_hemi1.push_back(Halton(2,dis_int(gen1)));
-	halt_hemi2.push_back(Halton(3,dis_int(gen1)));
+	//halt_hemi1.push_back(Halton(2,dis_int(gen1)));
+	//halt_hemi2.push_back(Halton(3,dis_int(gen1)));
 	
 	// iterative instead of recursion
 	while (!terminated)
 	{
-		// add new halton sampler for current depth level
-		if (depth > halt_hemi1.size())
-		{
-			halt_hemi1.push_back(Halton(2,dis_int(gen1)));
-			halt_hemi2.push_back(Halton(3,dis_int(gen1)));
-		}
-		
-		Halton hemi_samp1 = halt_hemi1.at(depth - 1);
-		Halton hemi_samp2 = halt_hemi2.at(depth - 1);
+		//// add new halton sampler for current depth level
+		//if (depth > halt_hemi1.size())
+		//{
+		//	halt_hemi1.push_back(Halton(2,dis_int(gen1)));
+		//	halt_hemi2.push_back(Halton(3,dis_int(gen1)));
+		//}
+		//
+		//Halton hemi_samp1 = halt_hemi1.at(depth - 1);
+		//Halton hemi_samp2 = halt_hemi2.at(depth - 1);
 		
 		Intersection inter = computeIntersection(r);
 		

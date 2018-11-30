@@ -21,7 +21,7 @@ void render_kernel(Vec3Df *output, float x, float y, int spp)
 	// Uniform random number generator [0, 1)
 	std::random_device rd;	// seed
 	std::mt19937 gen(rd());	// Mersenne twister seeded with rd
-	std::uniform_int_distribution<int> dis(0, UINT_MAX);
+	std::uniform_int_distribution<int> dis(0, INT_MAX);
 	
 	// Halton sequence
 	std::vector<Halton> halt;

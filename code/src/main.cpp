@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <math.h>
+#include <time.h>
 #include "cam.h"
 #include "Vec3D.h"
 #include "BVH.h"
@@ -17,7 +18,7 @@
 
 const int width = 400;
 const int height = 400;
-const int spp = 10;
+const int spp = 1000;
 
 /*
  * Structures
@@ -133,6 +134,7 @@ int main()
 	Vec3Df *output = new Vec3Df[width*height];
 	Image result(width,height);
 	
+#pragma omp parallel for schedule(dynamic, 1) 
 	for (int i=0; i < width; i++)
 	{
 		for (int j=0; j < height; j++)
