@@ -1,9 +1,7 @@
-//
-//  cam.cpp
-//  
-// https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-generating-camera-rays/generating-camera-rays
-//  Created by Max Weltevrede on 08/07/2018.
-//
+/*  
+ * Formulas from:
+ * https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-generating-camera-rays/generating-camera-rays
+ */
 
 #include <stdio.h>
 #include "cam.h"

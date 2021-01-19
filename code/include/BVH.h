@@ -1,10 +1,3 @@
-//
-//  BVH.h
-//  Pathtracer
-//
-//  Created by Max Weltevrede on 09/07/2018.
-//
-
 #ifndef BVH_h
 #define BVH_h
 

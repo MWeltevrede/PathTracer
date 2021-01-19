@@ -23,10 +23,10 @@ void LightRectangle::light_init(Vec3Df &o, Vec3Df &ax1, Vec3Df &ax2, Vec3Df &e,
 }
 
 // Function that will generate jittered (stratified) random samples from the subdivision
-Ray LightRectangle::randomLightSample(Vec3Df &rayOrigin, float &distance, std::vector<Halton> &halt)
+Ray LightRectangle::randomLightSample(Vec3Df &rayOrigin, float &distance)
 {	
-	double rand_x = halt.at(2).next();
-	double rand_y = halt.at(3).next();
+	double rand_x = dis(gen);
+	double rand_y = dis(gen);
 	
 	float x = rand_x*width;
 	float y = rand_y*height;
@@ -96,7 +96,7 @@ void LightSphere::light_init(Vec3Df &o, float r, Vec3Df &e)
 	emmision = e;
 }
 
-Ray LightSphere::randomLightSample(Vec3Df &rayOrigin, float &distance, std::vector<Halton> &halt)
+Ray LightSphere::randomLightSample(Vec3Df &rayOrigin, float &distance)
 {
 	Vec3Df normal = origin - rayOrigin;
 	normal.normalize();
@@ -104,9 +104,6 @@ Ray LightSphere::randomLightSample(Vec3Df &rayOrigin, float &distance, std::vect
 	normal.getTwoOrthogonals(axis1, axis2);
 	axis1.normalize();
 	axis2.normalize();
-	
-//	double rand_x = halt.at(2).next();
-//	double rand_y = halt.at(3).next();
 	
 	double rand_x = dis(gen);
 	double rand_y = dis(gen);

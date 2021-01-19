@@ -1,10 +1,3 @@
-//
-//  BVH.cpp
-//  Pathtracer
-//
-//  Created by Max Weltevrede on 09/07/2018.
-//
-
 #include "BVH.h"
 #include <cfloat>
 #include <math.h>

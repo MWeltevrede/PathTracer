@@ -1,10 +1,3 @@
-//
-//  intersection.h
-//  Pathtracer
-//
-//  Created by Max Weltevrede on 09/07/2018.
-//
-
 #ifndef intersection_h
 #define intersection_h
 
