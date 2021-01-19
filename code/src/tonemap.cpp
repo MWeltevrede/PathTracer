@@ -7,21 +7,6 @@ Vec3Df XYZ2R(2.5651,   -1.1665,   -0.3986);
 Vec3Df XYZ2G(-1.0217,    1.9777,    0.0439);
 Vec3Df XYZ2B(0.0753,   -0.2543,    1.1892);
 
-//float findMax(std::vector<std::vector<Vec3Df> > &image)
-//{
-//	float max = 0;
-//	for (int y = 0; y < WindowSize_Y; ++y)
-//	{
-//		for (unsigned int x = 0; x < WindowSize_X; ++x)
-//		{
-//			if (image[x][y][0] > max) max = image[x][y][0];
-//			if (image[x][y][1] > max) max = image[x][y][1];
-//			if (image[x][y][2] > max) max = image[x][y][2];
-//		}
-//	}
-//	return max;
-//}
-
 void RGBtoSRGB(Vec3Df *image)
 {
 	for (int y = 0; y < height; ++y)
@@ -105,59 +90,54 @@ void ToneMap::YxytoRGB(Vec3Df *Yxy)
 	}
 }
 
-//void ToneMap::reinhard(std::vector<std::vector<Vec3Df> > &image)
-//{
-//	RGBtoYxy(image);
-//	//// compute log average
-//	double Lavg = 0;
-//	double Lmax = 0;
-//	int count = 0;
-//	for (int y = 0; y < WindowSize_Y; ++y)
-//	{
-//		for (unsigned int x = 0; x < WindowSize_X; ++x)
-//		{
-//			float L = image[x][y][0];
-//			if (L > 0)
-//			{
-//				Lavg += log(L);
-//				count++;
-//			}
-//
-//			if (L > Lmax) Lmax = L;
-//
-////			if (x == 0)
-////			{
-////				//std::cout << "Lavg = " << Lavg << ", image[x][y][0] = " << image[x][y][0] << std::endl;
-////			}
-//		}
-//	}
-//
-//	Lavg = exp(Lavg/count);
-//
-//	std::cout << "Lavg = " << Lavg << std::endl;
-//
-//	double middle_gray = 0.4;
-//	Lmax = Lmax * middle_gray / Lavg;
-//	for (int y = 0; y < WindowSize_Y; ++y)
-//	{
-//		for (unsigned int x = 0; x < WindowSize_X; ++x)
-//		{
-//			float L = image[x][y][0];
-//			// map average to middle-gray
-//			float Lnew = L * middle_gray / Lavg;
-//
-//			// Compress high luminances
-//			Lnew = Lnew * (1.0 + Lnew / (Lmax*Lmax)) / (Lnew + 1.0);
-//
-//			image[x][y][0] = Lnew;
-//		}
-//	}
-//
-//	YxytoRGB(image);
-//
-//	// gamma correction
-//	RGBtoSRGB(image);
-//}
+void ToneMap::reinhard(Vec3Df *image)
+{
+	RGBtoYxy(image);
+	//// compute log average
+	double Lavg = 0;
+	double Lmax = 0;
+	int count = 0;
+	for (int y = 0; y < height; ++y)
+	{
+		for (unsigned int x = 0; x < width; ++x)
+		{
+			int i = (height - 1 - y) * width + x;	// row-major index, (0,0) in bottom left
+			float L = image[i][0];
+			if (L > 0)
+			{
+				Lavg += log(L);
+				count++;
+			}
+
+			if (L > Lmax) Lmax = L;
+		}
+	}
+
+	Lavg = exp(Lavg/count);
+
+	double middle_gray = 0.4;
+	Lmax = Lmax * middle_gray / Lavg;
+	for (int y = 0; y < height; ++y)
+	{
+		for (unsigned int x = 0; x < width; ++x)
+		{
+			int i = (height - 1 - y) * width + x;	// row-major index, (0,0) in bottom left
+			float L = image[i][0];
+			// map average to middle-gray
+			float Lnew = L * middle_gray / Lavg;
+
+			// Compress high luminances
+			Lnew = Lnew * (1.0 + Lnew / (Lmax*Lmax)) / (Lnew + 1.0);
+
+			image[i][0] = Lnew;
+		}
+	}
+
+	YxytoRGB(image);
+
+	// gamma correction
+	RGBtoSRGB(image);
+}
 
 void ToneMap::exposure(Vec3Df *image, float exposure)
 {

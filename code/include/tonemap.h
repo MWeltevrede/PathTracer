@@ -13,7 +13,7 @@ public:
 	ToneMap();
 	~ToneMap();
 
-	static void reinhard(std::vector<std::vector<Vec3Df> > &RGB);
+	static void reinhard(Vec3Df *image);
 	static void exposure(Vec3Df *image, float exposure);
 
 private:
