@@ -1,7 +1,7 @@
 # PathTracer
 A multi-threaded implementation of a Path Tracer in C++. 
 
-Result for 1000 samples per pixel: 
+Result for 10.000 samples per pixel: 
 
 ![](result.bmp?raw=true)
 
